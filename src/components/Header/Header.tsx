@@ -27,15 +27,15 @@ export const Header: React.FC<Props> = ({
 }) => {
   const [inputValue, setInputValue] = useState('');
 
-  function getToggling() {
+  const getToggling = () => {
     const currentToggle = todos.some(toDo => !toDo.completed);
 
     return todos
       .filter(toDo => toDo.completed !== currentToggle)
       .map(toDo => toDo.id);
-  }
+  };
 
-  function handleSubmit(event: React.FormEvent) {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     const trimmedValue = inputValue.trim();
 
@@ -49,7 +49,12 @@ export const Header: React.FC<Props> = ({
     } else {
       showError('Title should not be empty');
     }
-  }
+  };
+
+  const handleToggling = () => {
+    toggleTodoCompletedStatus();
+    setTogglingIds(getToggling());
+  };
 
   useEffect(() => {
     if (clearInput) {
@@ -67,10 +72,7 @@ export const Header: React.FC<Props> = ({
             active: !todos.some(todo => !todo.completed),
           })}
           data-cy="ToggleAllButton"
-          onClick={() => {
-            toggleTodoCompletedStatus();
-            setTogglingIds(getToggling());
-          }}
+          onClick={() => handleToggling()}
         />
       )}
 

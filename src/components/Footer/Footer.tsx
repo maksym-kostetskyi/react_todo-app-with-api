@@ -18,6 +18,11 @@ export const Footer: React.FC<Props> = ({
   deleteCompletedTodos,
   setDeletingIds,
 }) => {
+  const handleClearCompleted = () => {
+    deleteCompletedTodos();
+    setDeletingIds(todos.filter(todo => todo.completed).map(todo => todo.id));
+  };
+
   return (
     <footer className="todoapp__footer" data-cy="Footer">
       <span className="todo-count" data-cy="TodosCounter">
@@ -25,50 +30,26 @@ export const Footer: React.FC<Props> = ({
       </span>
 
       <nav className="filter" data-cy="Filter">
-        <a
-          href="#/"
-          className={classNames('filter__link', {
-            selected: todosFilter === FilterStatus.All,
-          })}
-          data-cy="FilterLinkAll"
-          onClick={() => setTodosFilter(FilterStatus.All)}
-        >
-          All
-        </a>
-
-        <a
-          href="#/active"
-          className={classNames('filter__link', {
-            selected: todosFilter === FilterStatus.Active,
-          })}
-          data-cy="FilterLinkActive"
-          onClick={() => setTodosFilter(FilterStatus.Active)}
-        >
-          Active
-        </a>
-
-        <a
-          href="#/completed"
-          className={classNames('filter__link', {
-            selected: todosFilter === FilterStatus.Completed,
-          })}
-          data-cy="FilterLinkCompleted"
-          onClick={() => setTodosFilter(FilterStatus.Completed)}
-        >
-          Completed
-        </a>
+        {Object.values(FilterStatus).map(value => (
+          <a
+            href={`#/${value}`}
+            className={classNames('filter__link', {
+              selected: todosFilter === value,
+            })}
+            data-cy={`FilterLink${value[0].toUpperCase() + value.slice(1)}`}
+            onClick={() => setTodosFilter(value)}
+            key={value}
+          >
+            {value[0].toUpperCase() + value.slice(1)}
+          </a>
+        ))}
       </nav>
 
       <button
         type="button"
         className="todoapp__clear-completed"
         data-cy="ClearCompletedButton"
-        onClick={() => {
-          deleteCompletedTodos();
-          setDeletingIds(
-            todos.filter(todo => todo.completed).map(todo => todo.id),
-          );
-        }}
+        onClick={() => handleClearCompleted()}
         disabled={todos.filter(todo => todo.completed).length === 0}
       >
         Clear completed

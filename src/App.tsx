@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { UserWarning } from './UserWarning';
 import { deleteTodo, postTodo, updateTodo, USER_ID } from './api/todos';
 import { Todo } from './types/Todo';
@@ -23,7 +23,7 @@ export const App: React.FC = () => {
   const [deletingIds, setDeletingIds] = useState<number[]>([]);
   const [togglingIds, setTogglingIds] = useState<number[]>([]);
 
-  function filterTodos(filter: string) {
+  const filterTodos = (filter: string) => {
     switch (filter) {
       case FilterStatus.Active:
         return todos.filter(todo => !todo.completed);
@@ -32,11 +32,11 @@ export const App: React.FC = () => {
       default:
         return todos;
     }
-  }
+  };
 
   const filteredTodos = filterTodos(todosFilter);
 
-  const showError = React.useCallback((errMessage: string) => {
+  const showError = useCallback((errMessage: string) => {
     if (errMessage) {
       setErrorMessage(errMessage);
 
@@ -46,11 +46,11 @@ export const App: React.FC = () => {
     }
   }, []);
 
-  const getCompletedTodos = React.useCallback(() => {
+  const getCompletedTodos = useCallback(() => {
     return todos.filter(todo => todo.completed);
   }, [todos]);
 
-  const getAndShowTodos = React.useCallback(() => {
+  const getAndShowTodos = useCallback(() => {
     getTodos()
       .then(toDos => {
         setTodos(toDos);
@@ -61,7 +61,7 @@ export const App: React.FC = () => {
       .finally(() => focusRef.current?.focus());
   }, [showError]);
 
-  const postNewTodo = React.useCallback(
+  const postNewTodo = useCallback(
     (todoToPost: Todo | null) => {
       if (todoToPost) {
         setTodoBeingAdded(true);
@@ -90,7 +90,7 @@ export const App: React.FC = () => {
     [todos, showError],
   );
 
-  const deleteChosenTodo = React.useCallback(
+  const deleteChosenTodo = useCallback(
     async (currentTodoToDelete: Todo | null) => {
       if (!currentTodoToDelete) {
         return;
@@ -113,7 +113,7 @@ export const App: React.FC = () => {
     [showError, selectedTodo],
   );
 
-  const deleteCompletedTodos = React.useCallback(() => {
+  const deleteCompletedTodos = useCallback(() => {
     const completedTodos = getCompletedTodos();
 
     completedTodos.forEach(todo => {
@@ -123,7 +123,7 @@ export const App: React.FC = () => {
     focusRef.current?.focus();
   }, [getCompletedTodos, deleteChosenTodo]);
 
-  const updateChosenTodo = React.useCallback(
+  const updateChosenTodo = useCallback(
     (todoSetToUpdate: Todo | null) => {
       if (todoSetToUpdate) {
         updateTodo(todoSetToUpdate)
@@ -149,7 +149,7 @@ export const App: React.FC = () => {
     [todos, showError, selectedTodo],
   );
 
-  const toggleTodoCompletedStatus = React.useCallback(async () => {
+  const toggleTodoCompletedStatus = useCallback(async () => {
     let completed = false;
 
     if (getCompletedTodos() && getCompletedTodos().length < todos.length) {
